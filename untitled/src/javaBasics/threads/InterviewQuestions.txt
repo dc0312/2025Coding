@@ -1,0 +1,90 @@
+Interview Questions on Thread States
+====================================
+What are all thread states in Java?
+→ NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, TERMINATED.
+
+What’s the difference between WAITING and TIMED_WAITING?
+→ WAITING is indefinite; TIMED_WAITING has a timeout.
+
+Can a thread go back from TERMINATED to RUNNABLE?
+→ No, once terminated, it cannot be restarted.
+
+What’s the difference between RUNNABLE and RUNNING?
+→ RUNNING is a substate of RUNNABLE when CPU is executing it.
+
+When does a thread go into BLOCKED state?
+→ When waiting for a monitor lock (synchronized) already held by another thread.
+
+Coding Question:
+================
+Write a program to show all lifecyles
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+Interview Questions on Thread Methods
+======================================
+Does sleep() release the lock? ❌ No
+
+Can it be interrupted? ✅ Yes → throws InterruptedException
+
+Does yield() guarantee context switch? ❌ No
+
+State change? RUNNING → RUNNABLE
+
+Does join() release locks? ✅ Yes (because it uses wait internally)
+
+What if timeout is given? → returns when timeout ends or thread completes, whichever first
+
+Does interrupt() stop thread immediately? ❌ No
+
+When does it throw InterruptedException? → If thread is in sleep/wait/join
+
+Quick Comparison Table
+Method	Releases Lock?	Can be Interrupted?	State
+sleep()	❌ No	            ✅ Yes	        TIMED_WAITING
+yield()	❌ No	            N/A	            RUNNABLE
+join()	✅ Yes	            ✅ Yes	        WAITING / TIMED_WAITING
+wait()	✅ Yes	            ✅ Yes	        WAITING / TIMED_WAITING
+park()	✅ Yes	            ✅ Yes	        WAITING
+
+Difference between sleep() and wait()?
+→ sleep() doesn’t release lock, wait() does.
+
+Difference between yield() and sleep()?
+→ yield() just hints, sleep() guarantees pause.
+
+Can you interrupt a thread in sleep?
+→ Yes → InterruptedException.
+
+Why is join() implemented using wait() internally?
+→ To allow the main thread to wait without busy looping.
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+Comparison Table
+| Feature           | `sleep()`                     | `wait()`                                |
+| ----------------- | ----------------------------- | --------------------------------------- |
+| Class             | `Thread`                      | `Object`                                |
+| Purpose           | Pause execution for time      | Inter-thread communication              |
+| Lock release      | ❌ No                          | ✅ Yes                                   |
+| Must hold lock?   | ❌ No                          | ✅ Yes (inside `synchronized`)           |
+| Who wakes thread? | Timer expiry                  | `notify()` / `notifyAll()` (or timeout) |
+| Exception         | Throws `InterruptedException` | Throws `InterruptedException`           |
+
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+Difference between notify() & notifyAll()?
+
+notify() wakes up one arbitrary thread.
+
+notifyAll() wakes up all waiting threads.
+
+Which one is better?
+
+Use notify() if only one thread needs to wake up.
+
+Use notifyAll() to avoid deadlocks when multiple threads may be eligible.
+
+Can we call notify() outside synchronized block?
+
+❌ No → throws IllegalMonitorStateException.
+
+💡 Pro Tip: Most interviewers expect you to say “always prefer notifyAll() unless you are 100% sure
+only one thread is waiting”, because notify() can cause missed signals & deadlocks.
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
